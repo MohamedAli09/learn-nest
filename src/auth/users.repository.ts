@@ -9,11 +9,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AuthCredentialsDto } from './dto/auth.credentials.dto';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './jwt-payload.interface';
 @Injectable()
 export class UsersRepository {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private jwtService: JwtService,
   ) {}
   async createUser(authCredentialsDto: AuthCredentialsDto): Promise<void> {
     const { username, password } = authCredentialsDto;
@@ -37,11 +40,13 @@ export class UsersRepository {
   }
   async validateUserPassword(
     authCredentialsDto: AuthCredentialsDto,
-  ): Promise<string> {
+  ): Promise<{ acessToken: string }> {
     const { username, password } = authCredentialsDto;
     const user = await this.userRepository.findOne({ where: { username } });
     if (user && (await bcrypt.compare(password, user.password))) {
-      return 'success';
+      const payload: JwtPayload = { username };
+      const acessToken: string = await this.jwtService.sign(payload);
+      return { acessToken };
     } else {
       throw new UnauthorizedException('user or password incorrect');
     }
