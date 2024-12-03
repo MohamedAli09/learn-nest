@@ -10,8 +10,11 @@ import { User } from 'src/auth/user.entity';
 @Injectable()
 export class TasksService {
   constructor(private readonly tasksRepository: TasksRepository) {}
-  async getTasks(filterDto: GetTaskFilterDto): Promise<TaskEntity[]> {
-    return this.tasksRepository.getTasks(filterDto);
+  async getTasks(
+    filterDto: GetTaskFilterDto,
+    user: User,
+  ): Promise<TaskEntity[]> {
+    return this.tasksRepository.getTasks(filterDto, user);
   }
 
   async getTaskById(id: string): Promise<TaskEntity> {

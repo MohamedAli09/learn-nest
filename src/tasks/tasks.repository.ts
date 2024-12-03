@@ -16,9 +16,13 @@ export class TasksRepository {
     private readonly taskRepository: Repository<TaskEntity>,
   ) {}
 
-  async getTasks(filterDto: GetTaskFilterDto): Promise<TaskEntity[]> {
+  async getTasks(
+    filterDto: GetTaskFilterDto,
+    user: User,
+  ): Promise<TaskEntity[]> {
     const { status, search } = filterDto;
     const query = this.taskRepository.createQueryBuilder('task_entity');
+    query.where({ user });
     if (status) {
       query.andWhere('task_entity.status = :status', { status });
     }
