@@ -69,8 +69,11 @@ export class TasksController {
   //   return this.tasksService.updateTaskStatus(id, status);
   // }
   @Get('/:id')
-  getTaskById(@Param('id') id: string): Promise<TaskEntity> {
-    return this.tasksService.getTaskById(id);
+  getTaskById(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<TaskEntity> {
+    return this.tasksService.getTaskById(id, user);
   }
   @Post()
   createTask(
@@ -83,7 +86,8 @@ export class TasksController {
   updateTaskStatus(
     @Param('id') id: string,
     @Body() updateTaskStatusDto: UpdateTaskStatusDto,
+    @GetUser() user: User,
   ) {
-    return this.tasksService.updateTaskStatus(id, updateTaskStatusDto);
+    return this.tasksService.updateTaskStatus(id, updateTaskStatusDto, user);
   }
 }

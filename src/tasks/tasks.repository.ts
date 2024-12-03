@@ -59,8 +59,9 @@ export class TasksRepository {
   }
 
   // Method to find a task by ID
-  async findTaskById(id: string): Promise<TaskEntity | null> {
-    return await this.taskRepository.findOne({ where: { id } });
+  async findTaskById(id: string, user: User): Promise<TaskEntity | null> {
+    //where id and user
+    return await this.taskRepository.findOne({ where: { id, user } });
   }
 
   async deleteTaskById(id: string): Promise<void> {
@@ -73,9 +74,10 @@ export class TasksRepository {
   async updateTaskStatus(
     id: string,
     updateTaskStatusDto: UpdateTaskStatusDto,
+    user: User,
   ): Promise<TaskEntity> {
     const { status } = updateTaskStatusDto;
-    const task = await this.findTaskById(id);
+    const task = await this.findTaskById(id, user);
     if (!task) {
       throw new NotFoundException(`Task with ID "${id}" not found`);
     }
